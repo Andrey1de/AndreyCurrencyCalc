@@ -13,7 +13,7 @@ export class SignalRService {
   /**
    *
    */
-  constructor() {
+  constructor( ) {
     
     
   }
