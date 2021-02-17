@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   useMockHttp : false,
   moneyPairsList: 'USD/ILS,GBP/EUR,EUR/JPY,EUR/USD',
-  applicationUrl : 'http://localhost:62000/api/CurrencyRatios/'
+  applicationUrl : 'http://localhost:62000/'
 };
 
 /*

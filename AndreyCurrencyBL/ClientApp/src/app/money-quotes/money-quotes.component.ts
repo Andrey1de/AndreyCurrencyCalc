@@ -39,11 +39,6 @@ export class MoneyQuotesComponent implements OnInit {
   
    
   
-  // form = new FormGroup({
-  //   moneyPairSelect: new FormControl(''),
-  //   pairsDelim: new FormControl('')
-  // });
-
   constructor( private fb: FormBuilder, 
     private quoteDataService : QuoteDataService) { 
       this.pairsDelim = environment.moneyPairsList;
