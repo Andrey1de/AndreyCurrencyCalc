@@ -1,4 +1,5 @@
 using AndreyCurrecyBL.Services;
+using AndreyCurrencyBL.HubConfig;
 using AndreyCurrencyBL.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,6 +40,8 @@ namespace AndreyCurrencyBL
                 .AllowAnyHeader()
                 .AllowCredentials());
             });
+
+            services.AddSignalR();
 
             services.AddSingleton<ICurrencyRatiosHTTPConsumer,CurrencyRatiosHTTPConsumer>();
             
@@ -91,6 +94,8 @@ namespace AndreyCurrencyBL
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<RatioEnentsHub>("/ratioevents");
+
             });
 
             app.UseSpa(spa =>

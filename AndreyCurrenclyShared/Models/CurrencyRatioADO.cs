@@ -12,6 +12,7 @@ namespace AndreyCurrenclyShared.Models
     {
         string pair { get; set; }
         double ratio { get; set; }
+       // double oldratio { get; set; }
 
         DateTime updated { get; set; }
 
@@ -22,8 +23,15 @@ namespace AndreyCurrenclyShared.Models
     public class CurrencyRatioADO : ICurrencyRatioADO
     {
       
+
         public string pair { get; set; }
         public double ratio { get; set; }
+        //public double ratio {
+        //    get => _ratio;
+        //    set {  oldratio = _ratio; ratio = value; }
+        //}
+        //public double oldratio { get;  set; } = -1;
+
         public DateTime updated { get; set; } = new DateTime(1800, 1, 1);
         public int status { get; set; } = 0;
 

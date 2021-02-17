@@ -26,10 +26,12 @@ export class QuoteDataService {
 
   static readonly SubjectData$ : BehaviorSubject<SubjectData> 
       = new BehaviorSubject<SubjectData>(QuoteDataService.Data);
+   readonly Url : string;
 
  
   constructor(private http: HttpClient) {
     console.log('+++QuoteDataService()');
+    this.Url = environment.applicationUrl + 'api/';//'http://localhost:62000/'
     // QuoteDataService.Data.QuotePairsDelimited = 
     //       this.normDelim(environment.moneyPairsList);
    
@@ -47,7 +49,7 @@ export class QuoteDataService {
     Promise<QuoteRecord[]> {
     //debugger;
     let delimStr : string = delimStrIn.replace(/\//g,'-').toLowerCase();
-    let url = environment.applicationUrl + 'delimited/' +delimStr;
+    let url = environment.applicationUrl +  'CurrencyRatios/delimited/' +delimStr;
     console.log(`+++QuoteDataService.retrieveData(`+ url +`)`);
    //let arr : QuoteRecord[] = [];
     let observ : Promise<QuoteRecord[]> = null;

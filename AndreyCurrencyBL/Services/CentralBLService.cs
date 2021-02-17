@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace AndreyCurrencyBL.Services
 {
-    internal class PairsGetTime
+    public class PairsGetTime
     {
         public CurrencyRatioADO Ratio { get; set; } = null;
         public DateTime? Touched { get; set; } = null;
@@ -40,9 +40,16 @@ namespace AndreyCurrencyBL.Services
 
         private readonly ILogger<CentralBLService> Log;
 
-        private readonly ConcurrentDictionary<string, PairsGetTime> DictPairsGet =
-                new ConcurrentDictionary<string, PairsGetTime>();
+        private static readonly ConcurrentDictionary<string, PairsGetTime> DictPairsGet ;
         private readonly ICurrencyRatiosHTTPConsumer Consumer;
+
+        public static List<PairsGetTime> AllData { get => DictPairsGet.Values.ToList(); }
+
+        static CentralBLService()
+        {
+            DictPairsGet =
+                new ConcurrentDictionary<string, PairsGetTime>();
+        }
 
         public CentralBLService(ILogger<CentralBLService> logger
                                , IConfiguration config

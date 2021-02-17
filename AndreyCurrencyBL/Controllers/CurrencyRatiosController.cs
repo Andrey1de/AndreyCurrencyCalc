@@ -8,6 +8,7 @@ using AndreyCurrenclyShared.Models;
 using AndreyCurrenclyShared.Text;
 using System.Net;
 using System.Text;
+using AndreyCurrencyBL.TimerFeatures;
 
 namespace AndreyCurrencyBL.Controllers
 {
@@ -64,8 +65,6 @@ namespace AndreyCurrencyBL.Controllers
         }
 
 
-
-
         [HttpGet]
         [Route("default")]
         public ActionResult<string> GetDefault()
@@ -79,6 +78,15 @@ namespace AndreyCurrencyBL.Controllers
         {
             var ret = await ConvSvc.GetConvertorName();
             return ret;
+        }
+
+        [HttpGet]
+        [Route("sendevent")]
+        public  ActionResult<CurrencyRatioCallback> TrySendEvent()
+        {
+
+            List<CurrencyRatioCallback> ret = ChangeRatioSimulatorMasnager.GetData();
+            return Ok(ret[0]);
         }
     }
 }
