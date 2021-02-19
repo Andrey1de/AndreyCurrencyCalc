@@ -9,6 +9,8 @@ using AndreyCurrenclyShared.Text;
 using System.Net;
 using System.Text;
 using AndreyCurrencyBL.TimerFeatures;
+using AndreyCurrencyBL.HubConfig;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AndreyCurrencyBL.Controllers
 {
@@ -19,12 +21,20 @@ namespace AndreyCurrencyBL.Controllers
 
         private readonly ILogger<CurrencyRatiosController> Logger;
         private readonly ICentralBLService ConvSvc;
+        public IHubContext<ChartHub> Hub;
+
+       // private readonly IRatioEnentsHubFacade Hub;
+
 
         public CurrencyRatiosController(
             ILogger<CurrencyRatiosController> logger,
-            ICentralBLService _converter
+            ICentralBLService _converter,
+            IHubContext<ChartHub> _hub
+            //IRatioEnentsHubFacade _hub
             )
         {
+           Hub = _hub;
+
             Logger = logger;
             ConvSvc = _converter;
         }
@@ -80,13 +90,15 @@ namespace AndreyCurrencyBL.Controllers
             return ret;
         }
 
-        [HttpGet]
-        [Route("sendevent")]
-        public  ActionResult<CurrencyRatioCallback> TrySendEvent()
-        {
+        //[HttpGet]
+        //[Route("sumulate")]
+        //public async Task<ActionResult<List<CurrencyRatioChange>>> TrySimulate()
+        //{
 
-            List<CurrencyRatioCallback> ret = ChangeRatioSimulatorMasnager.GetData();
-            return Ok(ret[0]);
-        }
+        //    List<CurrencyRatioChange> ret = ChangeRatioSimulatorMasnager.GetChanges();
+        //    await Hub.changeRatios(ret);
+            
+        //    return  Ok(ret) ;
+        //}
     }
 }

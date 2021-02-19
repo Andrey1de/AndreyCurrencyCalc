@@ -15,6 +15,7 @@ import { ListQuotesComponent } from './list-quotes/list-quotes.component';
 import { QuoteDataService } from './services/quote-data.service';
 //import { QuotePairsService} from './services/quote-pairs.service_ts';
 import { from } from 'rxjs';
+import { SignalRService } from './services/signal-r.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,7 +40,7 @@ import { from } from 'rxjs';
    // MaterialsModule.forRoot()
 
   ],
-  providers: [ QuoteDataService],
+  providers: [ QuoteDataService, SignalRService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

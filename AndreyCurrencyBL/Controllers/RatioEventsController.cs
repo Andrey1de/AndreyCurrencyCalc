@@ -1,4 +1,5 @@
-﻿using AndreyCurrencyBL.HubConfig;
+﻿using AndreyCurrenclyShared.Models;
+using AndreyCurrencyBL.HubConfig;
 using AndreyCurrencyBL.TimerFeatures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,25 +11,29 @@ using System.Threading.Tasks;
 
 namespace AndreyCurrencyBL.Controllers
 {
-    [Route("api/sigalr/[controller]")]
     [ApiController]
+    // [Route("signalr/[controller]")]
+    [Route("api/chart")]
     public class RatioEventsController : ControllerBase
     {
-        private IHubContext<RatioEnentsHub> _hub;
-        public RatioEventsController(IHubContext<RatioEnentsHub> hub)
+        private IHubContext<ChartHub> Hub;
+        public RatioEventsController(IHubContext<ChartHub>  _hub)
         {
-            _hub = hub;
+           Hub = _hub;
         }
 
         [HttpGet]
-        [Route("getevent")]
-        public IActionResult GetEvent()
+        [Route("simulate")]
+        public async Task<ActionResult<List<CurrencyRatioChange>>>  SimulateEventent()
         {
 
-            List<AndreyCurrenclyShared.Models.CurrencyRatioCallback> data = ChangeRatioSimulatorMasnager.GetData();
-            var timerManager = new TimerManager(() => 
-                _hub.Clients.All.SendAsync("changeratios", data));
-            return Ok(new { Message = "Request Completed" });
+            List<CurrencyRatioChange> data = ChangeRatioSimulatorMasnager.GetChanges();
+
+            await Task.Delay(1);
+           // await HubFacade.changeRatios(data);
+
+          
+           return Ok(data);
         }
     }
 }

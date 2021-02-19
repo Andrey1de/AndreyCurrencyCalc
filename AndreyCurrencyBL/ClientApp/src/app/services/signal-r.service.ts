@@ -1,35 +1,44 @@
 import { Injectable } from '@angular/core';
 import * as signalR from "@aspnet/signalr";  // or from "@microsoft/signalr" if you are using a new library
-import { RatioEnentsModel } from '../models/RatioEnentsModel';
-import { environment } from '../../environments/environment';
+//import { ChartModel } from '../_interfaces/chartmodel.model';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignalRService {
-  public data: RatioEnentsModel;
-  public Url : string = environment.applicationUrl + 'api/sigalr/ratioevents';
+  //public data: ChartModel[];  
+  public readonly ratioEventsUrl :string = environment.applicationUrl 
+            + environment.ratioEvents;
+
   private hubConnection: signalR.HubConnection
-  /**
-   *
-   */
-  constructor( ) {
-    
-    
-  }
-  public startConnection = () => {
+
+  
+  public start () {
+
     this.hubConnection = new signalR.HubConnectionBuilder()
-                            .withUrl(this.Url)
+                            .withUrl(this.ratioEventsUrl)
                             .build();
+
+
     this.hubConnection
       .start()
-      .then(() => console.log('Connection started'))
+      .then(() => console.log('Connection:' + this.ratioEventsUrl +'=>started'))
       .catch(err => console.log('Error while starting connection: ' + err))
-  }
-  public addTransferChartDataListener = () => {
-    this.hubConnection.on('changeratios', (data) => {
-      this.data = data;
-      console.log(data);
-    });
-  }
+  
+  
+      this.hubConnection.on('changeRatios', (data) => {
+        debugger;
+      })
+    }
+
+    stop(){
+    
+      this.hubConnection.stop()   
+      .then(() => console.log('Connection:' + this.ratioEventsUrl +'=>stoped'))
+      .catch(err => console.log('Error while stopping connection: ' + err));
+  
+    }
 }
+
+ 

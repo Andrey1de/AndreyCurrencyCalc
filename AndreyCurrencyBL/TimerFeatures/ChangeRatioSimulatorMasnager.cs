@@ -13,20 +13,20 @@ namespace AndreyCurrencyBL.TimerFeatures
         /// Generates new ratio in randomal chosen member
         /// </summary>
         /// <returns></returns>
-        public static List<CurrencyRatioCallback> GetData()
+        public static List<CurrencyRatioChange> GetChanges()
         {
             var r = new Random();
             List<PairsGetTime> list = CentralBLService.AllData;
-            List<CurrencyRatioCallback> ret = new List<CurrencyRatioCallback>();
+            List<CurrencyRatioChange> ret = new List<CurrencyRatioChange>();
             if(list.Count > 0)
             {
-                int num = r.Next(list.Count);
+                int num = r.Next(0,list.Count);
                 var ado = list[num].Ratio;
-                var koefNew =  1 + ((r.NextDouble() - 0.5) / 5.0);// Change +/- 10% randomaly;
+                var koefNew =  1 + ((r.NextDouble() - 0.5) / 2.5);// Change +/- 20% randomaly;
 
                 var newRatio = ado.ratio *= koefNew; // ratio +/- 10% randomaly;
 
-                CurrencyRatioCallback callb = CurrencyRatioCallback.NewCallback(ado, newRatio);
+                CurrencyRatioChange callb = CurrencyRatioChange.NewCallback(ado, newRatio);
                 ret.Add(callb);
              }
 

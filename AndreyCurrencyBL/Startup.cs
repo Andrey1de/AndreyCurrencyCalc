@@ -41,10 +41,12 @@ namespace AndreyCurrencyBL
                 .AllowCredentials());
             });
 
-            services.AddSignalR();
+            services.AddSignalR();// SignalR
 
             services.AddSingleton<ICurrencyRatiosHTTPConsumer,CurrencyRatiosHTTPConsumer>();
-            
+
+
+           // services.AddTransient<IRatioEnentsHubFacade,RatioEnentsHubFacade>();
             /// <summary>
             /// Here may be implemented service factory to consume 
             /// Ratios from variois services
@@ -94,7 +96,10 @@ namespace AndreyCurrencyBL
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<RatioEnentsHub>("/ratioevents");
+                endpoints.MapHub<ChartHub>("chart"
+
+                   // "/ratioevents"
+                    );
 
             });
 

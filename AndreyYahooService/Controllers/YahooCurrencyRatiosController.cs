@@ -7,6 +7,7 @@ using AndreyCurrenclyShared.Models;
 using AndreyCurrenclyShared.Services;
 using AndreyCurrenclyShared.Text;
 using System.Reflection;
+using System;
 
 namespace AndreyYahooService.Controllers
 {
@@ -45,35 +46,46 @@ namespace AndreyYahooService.Controllers
 
         [Route("delimited/{delim}")]
         [HttpGet]
-        public async Task<ActionResult<CurrencyRatioADO[]>> GetDelimited(
+        public async Task<ActionResult<List<CurrencyRatioADO>>> GetDelimited(
             string delim)
         {
             List<CurrencyRatioADO> _listOut = new List<CurrencyRatioADO>();
             List<FromTo> listFromTo = delim.SplitDelimFromTo("-/").Where(p => p.IsValid).ToList();
-            if (listFromTo.Count == 0)
+            try
             {
-                return _listOut.ToArray();
-            }
-
-            List<Task<CurrencyRatioADO>> _listTasks = listFromTo.Select(
-                pair => ConvSvc.GetRatioForPair(pair.From, pair.To)
-            ).ToList();
-
-
-
-            if (_listTasks.Count > 0)
-            {
-
-                _ = await Task.WhenAll<CurrencyRatioADO>(_listTasks.ToArray());
-                _listTasks.ForEach(res =>
+                if (listFromTo.Count == 0)
                 {
-                    if (res.IsCompleted && res.Result.IsValid)
-                        _listOut.Add(res.Result);
-                });
+                    return _listOut;
+                }
+
+                List<Task<CurrencyRatioADO>> _listTasks = listFromTo
+                    .Select(pair => ConvSvc.GetRatioForPair(pair.From, pair.To))
+                    .ToList();
+
+
+
+                if (_listTasks.Count > 0)
+                {
+
+                    _ = await Task.WhenAll<CurrencyRatioADO>(_listTasks.ToArray());
+                    _listTasks.ForEach(res =>
+                    {
+                        if (res.IsCompleted && res.Result.IsValid)
+                            _listOut.Add(res.Result);
+                    });
+
+
+                }
 
 
             }
+            catch (Exception ex)
+            {
 
+                Logger.LogError(ex.Message);
+                return this.NotFound(_listOut);
+            }           
+            
             return Ok(_listOut);
         }
 

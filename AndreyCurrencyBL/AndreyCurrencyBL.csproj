@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.4" />
   </ItemGroup>
 
@@ -26,7 +25,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="HubConfig\IHubFacadeT.cs" />
+    <Compile Remove="HubConfig\RatioEnentsHub.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AndreyCurrenclyShared\AndreyCurrenclyShared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
