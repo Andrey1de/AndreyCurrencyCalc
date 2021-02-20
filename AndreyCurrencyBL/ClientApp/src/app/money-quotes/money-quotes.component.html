@@ -32,7 +32,7 @@
           (click)="onTry($event)">Try</button>
           &nbsp;&nbsp;&nbsp;
           <button class="btn btn-success" type="submit" 
-            [disabled]="!form.valid">Submit</button>
+            [disabled]="!form.valid">Get New Pairs</button>
       </form>
       <br/>
       -----------------------------------------------------------------
@@ -46,16 +46,22 @@
           <tr>
             <th>Pair</th>
             <th>Ratio </th>
+            <th>Old Ratio </th>
+            <th>Percent </th>
             <th>Status</th>
             <th>Updated</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let quote of quoteArray ">
+          <tr *ngFor="let quote of QuoteArraySubject$ | async ">
             <td>{{ quote.pair}}</td>
             <td>{{ quote.ratio }}</td>
+            <td>{{ quote.oldRatio }}</td>
+            <td [ngStyle]="getPercentStyle(percent(quote.ratio,quote.oldRatio))">
+              {{ percent(quote.ratio,quote.oldRatio)}}
+            </td>
             <td>{{ quote.status }}</td>
-           <td>{{ quote.updated }}</td>
+            <td>{{ quote.updated }}</td>
            </tr>
         </tbody>
       </table>

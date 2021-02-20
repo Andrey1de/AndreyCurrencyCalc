@@ -1,26 +1,27 @@
-﻿using AndreyCurrenclyShared.Models;
+﻿using AndreyCurrenclyShared.Text;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace AndreyCurrenclyShared.Models
 {
-    public class RatioEnentADO
+    public class RatioEventADO
     {
         string pair { get; set; }
         double ratio { get; set; }
         double oldratio { get; set; }
    
         DateTime updated { get; set; }
+        bool IsValid => !pair.IsZ() && ratio > 0 ;
 
-        public static RatioEnentADO NewRatio(CurrencyRatioADO ratioAdo
-            , double newratio)
+
+        public static RatioEventADO NewRatio(CurrencyRatioADO ratioAdo)
         {
-            var ret = new RatioEnentADO()
+            var ret = new RatioEventADO()
             {
                 pair = ratioAdo.pair,
-                oldratio = ratioAdo.ratio,
-                ratio = (ratioAdo.ratio = newratio),
+                oldratio = ratioAdo.oldratio,
+                ratio = ratioAdo.ratio,
                 updated = DateTime.Now
 
             };

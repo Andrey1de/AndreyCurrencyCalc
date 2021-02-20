@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { QuoteRecord } from '../models/QuoteRecord';
-import { QuoteDataService , SubjectData } from '../services/quote-data.service';
+import { QuoteDataService } from '../services/quote-data.service';
 //import {QuotePairsService} from '../services/quote-pairs.service_ts'
 
  
@@ -11,13 +12,18 @@ import { QuoteDataService , SubjectData } from '../services/quote-data.service';
   templateUrl: './money-quotes.component.html',
   styleUrls: ['./money-quotes.component.css']
 })
-export class MoneyQuotesComponent implements OnInit {
+export class MoneyQuotesComponent implements OnInit , OnDestroy{
   selectedValue : any = "All";
 
-  Data : SubjectData = new SubjectData();
+  quoteArray : QuoteRecord[] = [];
+  _quoteArraySubject$ : BehaviorSubject<QuoteRecord[]>;
+  get QuoteArraySubject$() : BehaviorSubject<QuoteRecord[]>
+  {
+    return this._quoteArraySubject$;
+  }
 
   //pairsDelim : string;
-  quoteArray :  QuoteRecord[] = [];
+  //quoteArray :  QuoteRecord[] = [];
 
  //export class ProfileEditorComponent {
   form = this.fb.group({
@@ -37,49 +43,66 @@ export class MoneyQuotesComponent implements OnInit {
       this.f.pairsDelim.setValue(val);
     }
   
-   
-  
-  // form = new FormGroup({
-  //   moneyPairSelect: new FormControl(''),
-  //   pairsDelim: new FormControl('')
-  // });
+    getPercentStyle(val: number) {
+      let color = ''
+      if (val >  .00001) {color = 'red';}
+      else if (val < -.00001) {color = 'blue';}
+      else  {color = 'black';}
+      return {
+        color: color
+      };
+  }
+    private subscription : Subscription;
 
   constructor( private fb: FormBuilder, 
-    private quoteDataService : QuoteDataService) { 
+    private dataSvc : QuoteDataService) { 
       this.pairsDelim = environment.moneyPairsList;
+      this._quoteArraySubject$  = dataSvc.QuoteArraySubject$;
 
-      QuoteDataService.SubjectData$.subscribe(data=>{
-        this.Data = data;
+      // this.subscription =
+      //  this.dataSvc.QuoteArraySubject$.subscribe(data=>{
+      //   this.quoteArray = data;
         //debugger;
-        this.updateProfile();
-      });
+      //   this.updateProfile();
+      // });
+  }
+  ngOnInit(): void {
+  }
+  ngOnDestroy(): void {
+   //this.subscription.unsubscribe();
   }
 
    updateProfile() {
-    this.quoteArray =  this.Data.QuoteArray;
-    if(!this.pairsDelim){
+      if(!this.pairsDelim){
       this.pairsDelim = this.quoteArray.map(p=>p.pair.toUpperCase()).join(',');
     }
-    // this.form.patchValue({
-    //   pairsDelim: this.Data.QuoteKeysArray,
-    // });
+  
    }
-    ngOnInit(): void {
-  }
-
-  onTry(){
-    let dd = this.quoteDataService.retrieveData$(this.pairsDelim) 
-      .then(p=>{
-        console.log('quoteDataService.retrieveData\t\n=>('+this.pairsDelim +')');
-      });
-
-    console.log(this.selectedValue.value);
-  }
  
+  onTry(){
+   // debugger;
+    this.dataSvc.testchange$().
+    then(
+      p=>{
+         p
+      }
+      );
+  
+   }
+ 
+  percent(ratio : number,oldRatio : number | null){
+    oldRatio = oldRatio || ratio;
+    let del = 100.0 * (1 - (oldRatio / ratio));
+    return del.toFixed(3);
+  }
+
   submit(){
-     let formValue = this.form.value;
-     console.log('Submit formValue' + formValue.toString());
-   
+
+    let dd = this.dataSvc.retrieveData$(this.pairsDelim) 
+    .then(p=>{
+      console.log('quoteDataService.retrieveData\t\n=>('+this.pairsDelim +')');
+    });
+
   }
 
   

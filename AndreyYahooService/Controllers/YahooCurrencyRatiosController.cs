@@ -70,7 +70,7 @@ namespace AndreyYahooService.Controllers
                     _ = await Task.WhenAll<CurrencyRatioADO>(_listTasks.ToArray());
                     _listTasks.ForEach(res =>
                     {
-                        if (res.IsCompleted && res.Result.IsValid)
+                        if (res.IsCompleted && res.Result.IsValid())
                             _listOut.Add(res.Result);
                     });
 

@@ -93,14 +93,11 @@ namespace AndreyCurrencyBL
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<ChartHub>("chart"
-
-                   // "/ratioevents"
-                    );
-
+                endpoints.MapControllers();
+                //endpoints.MapControllerRoute(
+                //    name: "default",
+                //    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<RartioHub>("/api/signalr");
             });
 
             app.UseSpa(spa =>

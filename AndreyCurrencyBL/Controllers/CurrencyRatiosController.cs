@@ -6,8 +6,6 @@ using Microsoft.Extensions.Logging;
 using AndreyCurrencyBL.Services;
 using AndreyCurrenclyShared.Models;
 using AndreyCurrenclyShared.Text;
-using System.Net;
-using System.Text;
 using AndreyCurrencyBL.TimerFeatures;
 using AndreyCurrencyBL.HubConfig;
 using Microsoft.AspNetCore.SignalR;
@@ -21,19 +19,14 @@ namespace AndreyCurrencyBL.Controllers
 
         private readonly ILogger<CurrencyRatiosController> Logger;
         private readonly ICentralBLService ConvSvc;
-        public IHubContext<ChartHub> Hub;
-
-       // private readonly IRatioEnentsHubFacade Hub;
-
+        public IHubContext<RartioHub, IRatioCallback> HubCont;
 
         public CurrencyRatiosController(
             ILogger<CurrencyRatiosController> logger,
-            ICentralBLService _converter,
-            IHubContext<ChartHub> _hub
-            //IRatioEnentsHubFacade _hub
-            )
+            IHubContext<RartioHub, IRatioCallback> _hubCont,
+            ICentralBLService _converter )
         {
-           Hub = _hub;
+           HubCont = _hubCont;
 
             Logger = logger;
             ConvSvc = _converter;
@@ -90,14 +83,30 @@ namespace AndreyCurrencyBL.Controllers
             return ret;
         }
 
+
+        [HttpGet]
+        [Route("testchange")]
+        public async Task<ActionResult<List<CurrencyRatioADO>>> SimulateEventent()
+        {
+
+            List<CurrencyRatioADO> data = ChangeRatioSimulatorMasnager.GetChanges();
+
+            await Task.Delay(1);
+            await HubCont.Clients.All.ChangeRatios(data);
+
+
+            return Ok(data);
+        }
+
+      
         //[HttpGet]
         //[Route("sumulate")]
-        //public async Task<ActionResult<List<CurrencyRatioChange>>> TrySimulate()
+        //public async Task<ActionResult<List<RatioEnentADO>>> TrySimulate()
         //{
 
-        //    List<CurrencyRatioChange> ret = ChangeRatioSimulatorMasnager.GetChanges();
+        //    List<RatioEnentADO> ret = ChangeRatioSimulatorMasnager.GetChanges();
         //    await Hub.changeRatios(ret);
-            
+
         //    return  Ok(ret) ;
         //}
     }

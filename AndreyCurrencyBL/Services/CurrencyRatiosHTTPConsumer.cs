@@ -44,6 +44,11 @@ namespace AndreyCurrecyBL.Services
         {
             string url = $"{ServiceUrl}pair/{from}/{to}";
             CurrencyRatioADO ret = await Consumer.HttpGet<CurrencyRatioADO>(url);
+            if (ret != null)
+            {
+                ret.oldRatio = ret.ratio;
+                ret.status = 1;
+            }
             return ret;
         }
 
@@ -55,6 +60,12 @@ namespace AndreyCurrecyBL.Services
             CurrencyRatioADO[] retArr = await Consumer.HttpGet<CurrencyRatioADO[]>(url);
             retArr = retArr ?? new CurrencyRatioADO[0];
             List<CurrencyRatioADO> list = new List<CurrencyRatioADO>(retArr);
+            list.ForEach(p =>
+            {
+                p.oldRatio = p.ratio;
+                p.status = 1;
+
+            });
             return list;
         }
 

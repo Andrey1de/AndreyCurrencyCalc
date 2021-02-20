@@ -33,7 +33,7 @@ namespace AndreyCurrencyBL.Services
     public class CentralBLService : ICentralBLService
     {
         public string DefaultCurrencyPairs { get; init; }
-
+    
         public TimeSpan MaxReadDelay { get; init; }// TimeSpan.FromMilliseconds()
         public readonly int MaxReadDelayMsec;//{ get => (int)MaxReadDelay.TotalMilliseconds }// TimeSpan.FromMilliseconds()
         public string Url { get; init; }// TimeSpan.FromMilliseconds()
@@ -73,7 +73,7 @@ namespace AndreyCurrencyBL.Services
         }
 
         
-        string Provider = "Yahoo";
+        readonly string Provider = "Yahoo";
         Func<PairsGetTime, int> getSpan = (PairsGetTime pgt) =>
          (int)(DateTime.Now - pgt.Touched.Value).TotalMilliseconds;
 
@@ -87,17 +87,17 @@ namespace AndreyCurrencyBL.Services
             int spanMsec;
             var key =   (from + "-" + to).ToUpper();
 
-            PairsGetTime pgt = null;
-             if (!DictPairsGet.TryGetValue(key, out pgt)
-                || pgt.Ratio != null ||! pgt.Ratio.IsValid
-                ||  (spanMsec = getSpan(pgt)) >=  MaxReadDelayMsec)
+            if (!DictPairsGet.TryGetValue(key, out PairsGetTime pgt)
+               || pgt.Ratio != null || pgt.Ratio.IsValid()
+               || (spanMsec = getSpan(pgt)) >= MaxReadDelayMsec)
             {
                 var pairGet = await Consumer.ConvertPair(from, to);
-                if (!pairGet.IsValid)
+                if (!pairGet.IsValid())
                 {
                     Log.LogWarning($"Impossible currency conversion  pair {key}  ");
                     return null;
                 }
+
                 pgt = new PairsGetTime() { Ratio = pairGet, Touched = DateTime.Now };
                 DictPairsGet.TryAdd(key, pgt);
                 Log.LogInformation($"Provider{Provider}.ConvertPair({key},ratio{pgt.Ratio.ratio}) ");
@@ -127,7 +127,7 @@ namespace AndreyCurrencyBL.Services
                 bool b;
 
                 if ((b = DictPairsGet.TryGetValue(key, out pgt))
-                   && pgt.Ratio != null && pgt.Ratio.IsValid
+                   && pgt.Ratio != null && pgt.Ratio.IsValid()
                    && (spanMsec = getSpan(pgt)) < MaxReadDelayMsec)
                 {
                     //Build delimited string
@@ -154,7 +154,7 @@ namespace AndreyCurrencyBL.Services
 
                     string key = ratio.pair.ToUpper().Replace("/", "-"); ;
 
-                    if (ratio.IsValid)
+                    if (ratio.IsValid())
                     {
                         DictPairsGet.TryAdd(key, new PairsGetTime() { Ratio = ratio, Touched = DateTime.Now });
                         Log.LogInformation($"Provider{Provider}.GetDelimited returns({ratio.pair},ratio={ratio.ratio}) ");

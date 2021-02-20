@@ -7,10 +7,12 @@ export const environment = {
   useMockHttp : false,
   moneyPairsList:      'USD/EUR,EUR/USD,USD/ILS,ILS/USD,GBP/EUR,EUR/JPY',
   applicationUrl :     'http://localhost:62000/',
-  ratioEvents :        'signalr/ratioevents',
+  ratioEvents :        'api/signalr/',
   currencyRatios :     'api/currencyratios/',
  
 };
+
+
 
 /*
  * In development mode, to ignore zone related error stack frames such as

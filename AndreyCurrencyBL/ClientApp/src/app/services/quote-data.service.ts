@@ -1,69 +1,49 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subject,BehaviorSubject,  of } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { BehaviorSubject,  of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { QuoteRecord ,DefaultQuotesMOK } from '../models/QuoteRecord';
 
-
-
-
-
- export class SubjectData{
-  QuoteArray: QuoteRecord[] = [];
-  get QuoteKeysArray(): string[] {
-    return this.QuoteArray.map(p=>p.pair.toUpperCase());
-  };
- 
- }
 @Injectable(
   { providedIn: 'root' }
  )
 export class QuoteDataService {
 
- // private static QuotePairsDelimited$ : Subject<string> = new Subject<string>();
-  static Data : SubjectData = new SubjectData();
-
-  static readonly SubjectData$ : BehaviorSubject<SubjectData> 
-      = new BehaviorSubject<SubjectData>(QuoteDataService.Data);
-
+ // private members
+  private  _quoteArray : QuoteRecord[] = [];
  
+  private  readonly _quoteArraySubject$ : 
+            BehaviorSubject<QuoteRecord[]>;
+    
+  
+  get QuoteArray(): QuoteRecord[]
+     {return this._quoteArray; }
+  get QuoteArraySubject$(): BehaviorSubject<QuoteRecord[]>
+     {return this._quoteArraySubject$; }
+
   constructor(private http: HttpClient) {
     console.log('+++QuoteDataService()');
+    this._quoteArraySubject$  =  
+        new BehaviorSubject<QuoteRecord[]>(this.QuoteArray);
+     
     // QuoteDataService.Data.QuotePairsDelimited = 
     //       this.normDelim(environment.moneyPairsList);
+  }
    
-    this.retrieveData$ (environment.moneyPairsList);
-    // .catch(
-    //   p=>console.log('+++retrieveData$,catch(' + p + '}' );
-    // );
-    // console.log('+++QuotePairsDelimited('+
-    //   QuoteDataService.Data.QuotePairsDelimited  +')');
- 
-  }
-
-  public pushDataArraya(data : any) : void{
-    // if(!Array.isArray(data)) return;
-    // data.forEach((item)=>{
-    //   if((item as SubjectData).type)
-    // });
-
-
-  }
-
- 
+    
   public  async getDelimidetPairs$ ( delimStrIn : string) : 
     Promise<QuoteRecord[]> {
     //debugger;
     let delimStr : string = delimStrIn.replace(/\//g,'-').toLowerCase();
-    let url = environment.applicationUrl + environment.currencyRatios + 'delimited/' +delimStr;
+    let url = environment.applicationUrl 
+            + environment.currencyRatios 
+            + 'delimited/' +delimStr;
     console.log(`+++QuoteDataService.retrieveData(`+ url +`)`);
-   //let arr : QuoteRecord[] = [];
-    let observ : Promise<QuoteRecord[]> = null;
-      if(environment.useMockHttp) {
-        return of<QuoteRecord[]>(DefaultQuotesMOK).toPromise();
-      }  
-      return this.http.get<QuoteRecord[]>(url).toPromise();
+   
+    if(environment.useMockHttp) {
+      return of<QuoteRecord[]>(DefaultQuotesMOK).toPromise();
+    }  
+    return this.http.get<QuoteRecord[]>(url).toPromise();
     
   }
 
@@ -74,14 +54,14 @@ export class QuoteDataService {
     if( delimStrIn.toLowerCase() === 'áll')
     {
       delimStrIn = 
-        QuoteDataService.Data.QuoteArray.join(',').toLowerCase() ;
+        this.QuoteArray.join(',').toLowerCase() ;
     }
 
 
    let ret =  this.getDelimidetPairs$(delimStrIn)
    .then(quotes => {
        let data = this.appendArrayOfQuotes(quotes);
-       QuoteDataService.SubjectData$.next(data);
+       
        return true;
  
     }).catch((reason)=>{
@@ -92,8 +72,16 @@ export class QuoteDataService {
   
   }
  
+  async testchange$(){
+    let url = environment.applicationUrl 
+            + environment.ratioEvents + 'testchange' ;
+    console.log(`+++testchange$({url})`)
 
-  private appendArrayOfQuotes( arr : QuoteRecord[]) : SubjectData{
+    return this.http.get(url).toPromise();
+    
+
+  }
+  private appendArrayOfQuotes( arr : QuoteRecord[]) : QuoteRecord[]{
    
     let map : Map<string,QuoteRecord> = new Map<string,QuoteRecord>();
     arr = arr || [];
@@ -102,21 +90,39 @@ export class QuoteDataService {
       map.set(quote.pair,quote);
     })
 
-    QuoteDataService.Data.QuoteArray.forEach((quote,)=>{
+    this._quoteArray.forEach((quote,)=>{
       map.set(quote.pair,quote);
     });
 
-   
-  
-    var data  = new  SubjectData();
-    data.QuoteArray =[ ...map.values() ];
-    //data.QuoteKeysArray =[ ...map.keys() ];
-    //data.QuotePairsDelimited =  data.QuoteKeysArray.join(',');
-   // QuoteDataService.LastData = data;
-     return data;
+
+    this._quoteArray = [ ...map.values() ]
+    this._quoteArraySubject$.next(this._quoteArray);
+    
+    return this.QuoteArray;
+  }
+
+  updateQuotesByEvents(arr : Array<any>){
+    arr = arr || [];
+    arr.forEach(ev  =>{
+      let pair = this.normKey(ev.pair) ;
+      let data = this._quoteArray.find(p=> p.pair === pair);
+      if(data) {
+        try{
+          data.ratio = ev.ratio;
+          data.oldRatio = ev.oldRatio;
+          data.updated = ev.updated ;
+          data.status = 2;//Statys  means the changed value
+        } catch(err){
+          
+          console.log(err.toString());
+        }
+
+      }
+    
+    })
   }
   
-  private normKey(str : string) { 
+  normKey(str : string) { 
     return ('' + str).replace(/ /g,'').toUpperCase();
   }
  
