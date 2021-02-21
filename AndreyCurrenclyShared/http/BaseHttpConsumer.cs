@@ -78,6 +78,7 @@ namespace AndreyCurrecyBL.http
         public async Task<string> HttpPost<TPayload>(string url, TPayload payload)
 
         {
+
             string jsonPayload = JsonSerializer.Serialize<TPayload>(payload);
             string jsonString = await HttpPost(url, jsonPayload);
             return jsonString;

@@ -1,6 +1,8 @@
 using AndreyCurrenclyShared.Models;
 using AndreyCurrenclyShared.Text;
 using System;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace AndreyCurrenclyShared.Models
 
@@ -9,41 +11,76 @@ namespace AndreyCurrenclyShared.Models
     /// Class to be used in WebApi requests transport
     /// Cause names  are lower cased
     /// </summary>
-    public interface ICurrencyRatioADO
+    public class CurrencyRatioADO
     {
-        string pair { get; set; }
-        double ratio { get; set; }
-        double oldRatio { get; set; }
 
-        DateTime updated { get; set; }
+       // [Newtonsoft.Json.JsonProperty("pair")]
+        [JsonPropertyName("pair")]
+        public string Pair { get; set; } = "";
 
-        int status { get; set; }
+        [JsonPropertyName("ratio")]
+        public double Ratio { get; set; } = -1;
 
-        bool IsValid();
 
-        CurrencyRatioADO Clone();
-    }
-    public class CurrencyRatioADO : ICurrencyRatioADO 
-    {
-  
+        [JsonPropertyName("oldRatio")]
+         public double OldRatio { get; set; } = -1;
 
-         public string pair { get; set; }
-      
-        public double ratio { get; set; } = -1;
-       
-        public double oldRatio { get; set; } = -1;
+        [JsonPropertyName("updated")]
+        public DateTime Updated { get; set; } = new DateTime(1800, 1, 1);
 
-        public DateTime updated { get; set; } = new DateTime(1800, 1, 1);
-        public int status { get; set; } = 0;
+        [JsonPropertyName("status")]
+        public int Status { get; set; } = 0;
 
         public bool IsValid()
         {
-            return !pair.IsZ() && ratio > 0 && status > 0;
+            return !Pair.IsZ() && Ratio > 0 && Status > 0;
         }
 
         public CurrencyRatioADO Clone()
         {
             return this.MemberwiseClone() as CurrencyRatioADO;
         }
-}
+
+        public static CurrencyRatioADO FromObject(object o)
+        {
+            CurrencyRatioADO ado = new CurrencyRatioADO();
+            
+            foreach (PropertyDescriptor propertyDescriptor in TypeDescriptor.GetProperties(o))
+            {
+                var name = propertyDescriptor.Name.ToLower();
+                var strValue = propertyDescriptor.GetValue(o).ToString();
+                try
+                {
+                    switch (name)
+                    {
+
+                        case "pair":
+                            ado.Pair = strValue;
+                            break;
+                        case "ratio":
+                            ado.Ratio = double.Parse(strValue);
+                            break;
+                        case "oldratio":
+                            ado.OldRatio = double.Parse(strValue);
+                            break;
+                        case "updated":
+                            ado.Updated = DateTime.Parse(strValue);
+                            break;
+                        case "status":
+                            ado.Status = int.Parse(strValue);
+                            break;
+
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine($"CurrencyRatioADO FromObject name={name} value={strValue} error \n" +
+                        ex.StackTrace);
+                }
+            }
+            return ado;
+
+        }
+    }
 }

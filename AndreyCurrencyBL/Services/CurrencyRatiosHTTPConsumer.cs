@@ -7,6 +7,7 @@ using System.Net.Http;
 using System;
 using AndreyCurrenclyShared.Text;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AndreyCurrecyBL.Services
 {
@@ -27,7 +28,7 @@ namespace AndreyCurrecyBL.Services
             IConfiguration config)
         {
             Config = config;
-            ServiceUrl = config.GetValue<string>("ServuceConverterUrl").Trim();
+            ServiceUrl = config.GetValue<string>("ServiceConverterUrl").Trim();
             if (!ServiceUrl.EndsWith('/'))
             {
                 ServiceUrl += '/';
@@ -46,8 +47,8 @@ namespace AndreyCurrecyBL.Services
             CurrencyRatioADO ret = await Consumer.HttpGet<CurrencyRatioADO>(url);
             if (ret != null)
             {
-                ret.oldRatio = ret.ratio;
-                ret.status = 1;
+                ret.OldRatio = ret.Ratio;
+                ret.Status = 1;
             }
             return ret;
         }
@@ -58,14 +59,16 @@ namespace AndreyCurrecyBL.Services
         {
             string url = $"{ServiceUrl}delimited/{delim}";
             CurrencyRatioADO[] retArr = await Consumer.HttpGet<CurrencyRatioADO[]>(url);
-            retArr = retArr ?? new CurrencyRatioADO[0];
-            List<CurrencyRatioADO> list = new List<CurrencyRatioADO>(retArr);
-            list.ForEach(p =>
-            {
-                p.oldRatio = p.ratio;
-                p.status = 1;
 
-            });
+            List<CurrencyRatioADO> list = new List<CurrencyRatioADO>();
+
+            foreach (var ado in retArr)
+            {
+                  ado.OldRatio = ado.Ratio;
+                ado.Status = 1;
+                list.Add(ado);
+            }
+  
             return list;
         }
 

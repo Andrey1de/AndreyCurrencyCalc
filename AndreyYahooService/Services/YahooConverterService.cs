@@ -69,10 +69,10 @@ namespace AndreyYahooService.Services
 
             DateTime dt0 = DateTime.Now;
             var that = new CurrencyRatioADO();
-            that.pair = pair;
-            that.ratio = -1.0;
-            that.status = -1;
-            that.updated = DateTime.Parse("1800-01-01");
+            that.Pair = pair;
+            that.Ratio = -1.0;
+            that.Status = -1;
+            that.Updated = DateTime.Parse("1800-01-01");
             string jsonBody = "";
 
 
@@ -98,9 +98,9 @@ namespace AndreyYahooService.Services
                 if (from == to)
                 {
                     Log.LogWarning("Input parameteres from:{0} == to:{1} returnad ratio 1", from, to);
-                    that.ratio = 1.0;
-                    that.updated = DateTime.Now;
-                    that.status = 0;
+                    that.Ratio = 1.0;
+                    that.Updated = DateTime.Now;
+                    that.Status = 0;
                     return that;
                 }
                 PairsGetTime pgt = null;
@@ -152,10 +152,10 @@ namespace AndreyYahooService.Services
 
 
                     var strRatio = arrr[1].Trim().Split("\"".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)[0];
-                    that.ratio = Double.Parse(strRatio);
+                    that.Ratio = Double.Parse(strRatio);
                     var strDate = arrr[2].Trim().Split("\"".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)[0];
-                    that.updated = DateTime.Parse(strDate);
-                    that.status = 1;
+                    that.Updated = DateTime.Parse(strDate);
+                    that.Status = 1;
 
                     _dict.TryAdd(pair, new PairsGetTime() { Ratio = that, Touched = DateTime.Now });
                     Log.LogInformation("{0}\n received in delt = {1} ms\n",

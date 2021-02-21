@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AndreyCurrenclyShared.Services;
 using AndreyYahooService.Services;
@@ -32,7 +33,10 @@ namespace AndreyYahooService
             services.AddSingleton<ICurrencyConverterService, YahooConverterService>();
 
 
-            services.AddControllers();
+            services.AddControllersWithViews().AddJsonOptions(option =>
+                option.JsonSerializerOptions.PropertyNamingPolicy
+                = JsonNamingPolicy.CamelCase
+                 );
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AndreyYahooService", Version = "v1" });

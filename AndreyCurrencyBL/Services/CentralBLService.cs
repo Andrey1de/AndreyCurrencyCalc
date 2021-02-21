@@ -100,7 +100,7 @@ namespace AndreyCurrencyBL.Services
 
                 pgt = new PairsGetTime() { Ratio = pairGet, Touched = DateTime.Now };
                 DictPairsGet.TryAdd(key, pgt);
-                Log.LogInformation($"Provider{Provider}.ConvertPair({key},ratio{pgt.Ratio.ratio}) ");
+                Log.LogInformation($"Provider{Provider}.ConvertPair({key},ratio{pgt.Ratio.Ratio}) ");
 
             }
 
@@ -133,7 +133,7 @@ namespace AndreyCurrencyBL.Services
                     //Build delimited string
                     var ratio = pgt.Ratio;
                     ret.Add(ratio);
-                    Log.LogInformation($"Provider{Provider}.FromHash({ratio.pair},ratio={ratio.ratio}) ");
+                    Log.LogInformation($"Provider{Provider}.FromHash({ratio.Pair},ratio={ratio.Ratio}) ");
      
                 }
                 else
@@ -152,12 +152,12 @@ namespace AndreyCurrencyBL.Services
 
                 listGet.ForEach(ratio => {
 
-                    string key = ratio.pair.ToUpper().Replace("/", "-"); ;
+                    string key = ratio.Pair.ToUpper().Replace("/", "-"); ;
 
                     if (ratio.IsValid())
                     {
                         DictPairsGet.TryAdd(key, new PairsGetTime() { Ratio = ratio, Touched = DateTime.Now });
-                        Log.LogInformation($"Provider{Provider}.GetDelimited returns({ratio.pair},ratio={ratio.ratio}) ");
+                        Log.LogInformation($"Provider{Provider}.GetDelimited returns({ratio.Pair},ratio={ratio.Ratio}) ");
                         ret.Add(ratio);
                     }
                     else
