@@ -7,81 +7,81 @@ import { environment } from 'src/environments/environment';
 import { QuoteRecord } from '../models/QuoteRecord';
 import { QuoteDataService } from '../services/quote-data.service';
 
- 
+
 @Component({
   selector: 'app-money-quotes',
   templateUrl: './money-quotes.component.html',
   styleUrls: ['./money-quotes.component.css']
 })
-export class MoneyQuotesComponent implements OnInit , OnDestroy{
-  selectedValue : any = "All";
-  private subscription : Subscription;
+export class MoneyQuotesComponent implements OnInit, OnDestroy {
+  selectedValue: any = "All";
+  private subscription: Subscription;
 
   @Input('pairsDelim')
   get pairsDelim(): string {
-      return this.f.pairsDelim.value;
+    return this.f.pairsDelim.value;
   }
-  set pairsDelim(val : string) {
+  set pairsDelim(val: string) {
     this.f.pairsDelim.setValue(val);
   }
 
   @Input('Ready')
-  Ready : boolean = false;
-  
+  Ready: boolean = false;
+
   readonly PairsDelimdSubject$: BehaviorSubject<string>;
 
   form = this.fb.group({
     pairsDelim: [''],//, Validators.required],
-  //  pairsSelect: [''],
- 
+    //  pairsSelect: [''],
+
   });
 
-  get f() {return this.form.controls;}
- 
-    
-  constructor( private fb: FormBuilder, 
-    private dataSvc : QuoteDataService) { 
-        this.PairsDelimdSubject$  = dataSvc.PairsDelimdSubject$;
-        this.subscription = this.PairsDelimdSubject$.subscribe(
-          delim=> this.pairsDelim = delim
-        );
-   }
- 
+  get f() { return this.form.controls; }
+
+
+  constructor(private fb: FormBuilder,
+    private dataSvc: QuoteDataService) {
+    this.PairsDelimdSubject$ = dataSvc.PairsDelimdSubject$;
+    this.subscription = this.PairsDelimdSubject$.subscribe(
+      delim => this.pairsDelim = delim
+    );
+  }
+
   ngOnInit(): void {
     this.Ready = false;
     this.pairsDelim = this.PairsDelimdSubject$.getValue();
     this.getNewPairs();
   }
-  
+
   ngOnDestroy(): void {
-   this.subscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
-  
-  onTry(){
- 
+
+  onTry() {
+
     this.dataSvc.testchange$();
     // then(p=>{
     //    p});
-  
-   }
- 
-//Set all the new pairs 
-  getNewPairs(){
-    this.Ready = false;
-    let dd = this.dataSvc.retrieveData$(this.pairsDelim) 
-    .then((res : string) =>{
-      if(res === 'OK'){
-        ;//this.quoteArray = res.quotes;
-       } else{
-        console.error(res);
-      }
-      this.Ready = true;
-       //console.log('quoteDataService.retrieveData\t\n=>('+this.pairsDelim +')');
-    });
 
   }
 
-  
+  //Set all the new pairs 
+  getNewPairs() {
+    this.Ready = false;
+    let dd = this.dataSvc.retrieveData$(this.pairsDelim)
+      .then((res: string) => {
+        if (res === 'OK') {
+          ;//this.quoteArray = res.quotes;
+        } else {
+          console.error(res);
+        }
+        this.Ready = true;
+        //console.log('quoteDataService.retrieveData\t\n=>('+this.pairsDelim +')');
+      });
+
+  }
+
+
 }
 
 
@@ -93,6 +93,6 @@ export class MoneyQuotesComponent implements OnInit , OnDestroy{
   //     ,'GBP/EUR'
   //     ,'EUR/JPY'
   //     ,'EUR/USD'
-       
+
   //   ];
   // }
