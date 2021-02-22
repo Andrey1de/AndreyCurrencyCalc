@@ -3,8 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject,  of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { QuoteRecord ,DefaultQuotesMOK } from '../models/QuoteRecord';
-import { Quote } from '@angular/compiler';
 
+// export class RetrieveResult{
+//   ret: boolean = false;
+//   quotes: QuoteRecord[] = [];
+//   reason : string = ""
+// }
 @Injectable(
   { providedIn: 'root' }
  )
@@ -48,7 +52,8 @@ export class QuoteDataService {
     
   }
 
-  public  async retrieveData$ ( delimStrIn : string = 'all') 
+  public  async retrieveData$ ( delimStrIn : string = 'all') : 
+  Promise<string>
   {
 
     delimStrIn = (delimStrIn || '');
@@ -58,18 +63,18 @@ export class QuoteDataService {
         this.QuoteArray.join(',').toLowerCase() ;
     }
 
-
-   let ret =  this.getDelimidetPairs$(delimStrIn)
-   .then(quotes => {
-       let data = this.appendArrayOfQuotes(quotes);
-       
-       return true;
- 
-    }).catch((reason)=>{
-      console.log('reason: '+ reason);
-      return false;
-    });
+    let ret : string = "OK";
+    try {
+      this._quoteArray =  await this.getDelimidetPairs$(delimStrIn);
+      this._quoteArray.forEach(p=> p.pair = this.normKey(p.pair))
+      this._quoteArraySubject$.next(this._quoteArray);
     
+    
+    } catch (error) {
+      ret = error.toString();
+     }
+   
+   return of(ret).toPromise();
   
   }
  

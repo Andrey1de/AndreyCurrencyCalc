@@ -1,11 +1,11 @@
 import { typeWithParameters } from '@angular/compiler/src/render3/util';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
+import { debug } from 'console';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { QuoteRecord } from '../models/QuoteRecord';
 import { QuoteDataService } from '../services/quote-data.service';
-//import {QuotePairsService} from '../services/quote-pairs.service_ts'
 
  
 @Component({
@@ -17,6 +17,17 @@ export class MoneyQuotesComponent implements OnInit , OnDestroy{
   selectedValue : any = "All";
   private subscription : Subscription;
 
+  @Input('pairsDelim')
+  get pairsDelim(): string {
+      return this.f.pairsDelim.value;
+  }
+  set pairsDelim(val : string) {
+    this.f.pairsDelim.setValue(val);
+  }
+
+  @Input('Ready')
+  Ready : boolean = false;
+
   quoteArray : QuoteRecord[] = [];
   _quoteArraySubject$ : BehaviorSubject<QuoteRecord[]>;
   get QuoteArraySubject$() : BehaviorSubject<QuoteRecord[]>
@@ -24,10 +35,7 @@ export class MoneyQuotesComponent implements OnInit , OnDestroy{
     return this._quoteArraySubject$;
   }
 
-  //pairsDelim : string;
-  //quoteArray :  QuoteRecord[] = [];
 
- //export class ProfileEditorComponent {
   form = this.fb.group({
     pairsDelim: [''],//, Validators.required],
     pairsSelect: [''],
@@ -35,32 +43,39 @@ export class MoneyQuotesComponent implements OnInit , OnDestroy{
   });
 
   get f() {return this.form.controls;}
-
-  @Input('pairsDelim')
-    get pairsDelim(): string {
-        return this.f.pairsDelim.value;
-    }
-
-    set pairsDelim(val : string) {
-      this.f.pairsDelim.setValue(val);
-    }
-  
-
-
+ 
     
   constructor( private fb: FormBuilder, 
     private dataSvc : QuoteDataService) { 
       this.pairsDelim = environment.moneyPairsList;
       this._quoteArraySubject$  = dataSvc.QuoteArraySubject$;
+      this.QuoteArraySubject$.getValue()
 
       this.subscription =
        this.dataSvc.QuoteArraySubject$.subscribe(data=>{
-        this.quoteArray = data;
        // debugger;
-        this.updateProfile();
+        this.quoteArray = data || [];
+        //let b = this.quoteArray
+        //this.Ready = true;
+       // debugger;
+        
+        this.normPairsDelim(this.quoteArray);
       });
   }
+  
+  normPairsDelim(quoteArray: QuoteRecord[]) {
+    if(quoteArray.length > 0 &&
+      !quoteArray.find(p=> p.status > 1 )){
+ 
+      this.pairsDelim = this.quoteArray
+        .map(p=>p.pair.toUpperCase()).join(',');
+   }
+
+  }
+
   ngOnInit(): void {
+    this.Ready = false;
+    this.getNewPairs();
   }
   ngOnDestroy(): void {
    this.subscription.unsubscribe();
@@ -80,12 +95,7 @@ export class MoneyQuotesComponent implements OnInit , OnDestroy{
    
   }
 
-   updateProfile() {
-      if(!this.pairsDelim){
-      this.pairsDelim = this.quoteArray.map(p=>p.pair.toUpperCase()).join(',');
-    }
-  
-   }
+ 
  
   onTry(){
    // debugger;
@@ -93,22 +103,22 @@ export class MoneyQuotesComponent implements OnInit , OnDestroy{
     then(
       p=>{
          p
-      }
-      );
+      });
   
    }
  
-  // percent(ratio : number,oldRatio : number | null){
-  //   oldRatio = oldRatio || ratio;
-  //   let del = 100.0 * (1 - (oldRatio / ratio));
-  //   return del.toFixed(3);
-  // }
-
-  submit(){
-
+//Set all the new pairs 
+  getNewPairs(){
+    this.Ready = false;
     let dd = this.dataSvc.retrieveData$(this.pairsDelim) 
-    .then(p=>{
-      console.log('quoteDataService.retrieveData\t\n=>('+this.pairsDelim +')');
+    .then((res : string) =>{
+      if(res === 'OK'){
+        ;//this.quoteArray = res.quotes;
+       } else{
+        console.error(res);
+      }
+      this.Ready = true;
+       //console.log('quoteDataService.retrieveData\t\n=>('+this.pairsDelim +')');
     });
 
   }

@@ -1,10 +1,10 @@
 
 <div class="content" role="main">
     <div class="container">
-      
-            
-      <form [formGroup]="form" (ngSubmit)="submit()"  >
-        <!--    -->
+       <!-- <form [formGroup]="form" (ngSubmit)="submit()"  > -->
+     
+      <form [formGroup]="form"   >
+          
           <div class="form-group">
 
             <label for="pairsDelim">Currency Pairs:</label>
@@ -27,12 +27,16 @@
               </div> -->
           </div>
     
-         
+         <div *ngIf="Ready">
+          <button class="btn btn-success" type="text" 
+            [disabled]="!Ready" (click)="getNewPairs($event)">Get New Pairs</button>
+            &nbsp;&nbsp;&nbsp;
           <button class="btn btn-primary" type="text" 
           (click)="onTry($event)">Try</button>
-          &nbsp;&nbsp;&nbsp;
-          <button class="btn btn-success" type="submit" 
-            [disabled]="!form.valid">Get New Pairs</button>
+          
+         </div>
+   
+
       </form>
       <br/>
       <br/>
@@ -52,7 +56,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let quote of quoteArray; trackBy: trackQuote  "
+          <tr *ngFor="let quote of  QuoteArraySubject$ | async  "
             [ngStyle]= "percentStyle(quote)"
           >
             <td>{{ quote.pair}}</td>

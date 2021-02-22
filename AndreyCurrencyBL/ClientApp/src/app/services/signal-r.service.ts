@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import * as signalR from "@aspnet/signalr";  // or from "@microsoft/signalr" if you are using a new library
-//import { ChartModel } from '../_interfaces/chartmodel.model';
 import {environment} from '../../environments/environment';
 import { QuoteDataService } from './quote-data.service';
 
@@ -29,15 +28,9 @@ export class SignalRService {
       .then(
         () => console.log('Connection:' + this.ratioEventsUrl +'=>started')
         )
-      .catch(
-        err => console.log('Error while starting connection: ' + err)
-        )
-  
-    this.hubConnection.on('changeRatios', (data) => {
-   // debugger;
- 
+      .catch(err => console.log('Error while starting connection: ' + err))
+        this.hubConnection.on('changeRatios', (data) => {
         this.dataSvc.updateQuotesByEvents(data);
-        
       })
     }
 
