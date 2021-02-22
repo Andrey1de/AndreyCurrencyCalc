@@ -16,13 +16,15 @@ import { QuoteDataService } from './services/quote-data.service';
 //import { QuotePairsService} from './services/quote-pairs.service_ts';
 import { from } from 'rxjs';
 import { SignalRService } from './services/signal-r.service';
+import { MoneyTableComponent } from './money-table/money-table.component';
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
     MoneyQuotesComponent,
     HomeComponent,
-    ListQuotesComponent
+    ListQuotesComponent,
+    MoneyTableComponent
   ],
   imports: [
     BrowserModule,

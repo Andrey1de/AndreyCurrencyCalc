@@ -1,7 +1,7 @@
-import { typeWithParameters } from '@angular/compiler/src/render3/util';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
-import { debug } from 'console';
+import { FormBuilder } from '@angular/forms';
+// import { FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
+// import { debug } from 'console';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { QuoteRecord } from '../models/QuoteRecord';
@@ -27,18 +27,12 @@ export class MoneyQuotesComponent implements OnInit , OnDestroy{
 
   @Input('Ready')
   Ready : boolean = false;
-
-  quoteArray : QuoteRecord[] = [];
-  _quoteArraySubject$ : BehaviorSubject<QuoteRecord[]>;
-  get QuoteArraySubject$() : BehaviorSubject<QuoteRecord[]>
-  {
-    return this._quoteArraySubject$;
-  }
-
+  
+  readonly PairsDelimdSubject$: BehaviorSubject<string>;
 
   form = this.fb.group({
     pairsDelim: [''],//, Validators.required],
-    pairsSelect: [''],
+  //  pairsSelect: [''],
  
   });
 
@@ -47,63 +41,27 @@ export class MoneyQuotesComponent implements OnInit , OnDestroy{
     
   constructor( private fb: FormBuilder, 
     private dataSvc : QuoteDataService) { 
-      this.pairsDelim = environment.moneyPairsList;
-      this._quoteArraySubject$  = dataSvc.QuoteArraySubject$;
-      this.QuoteArraySubject$.getValue()
-
-      this.subscription =
-       this.dataSvc.QuoteArraySubject$.subscribe(data=>{
-       // debugger;
-        this.quoteArray = data || [];
-        //let b = this.quoteArray
-        //this.Ready = true;
-       // debugger;
-        
-        this.normPairsDelim(this.quoteArray);
-      });
-  }
-  
-  normPairsDelim(quoteArray: QuoteRecord[]) {
-    if(quoteArray.length > 0 &&
-      !quoteArray.find(p=> p.status > 1 )){
- 
-      this.pairsDelim = this.quoteArray
-        .map(p=>p.pair.toUpperCase()).join(',');
+        this.PairsDelimdSubject$  = dataSvc.PairsDelimdSubject$;
+        this.subscription = this.PairsDelimdSubject$.subscribe(
+          delim=> this.pairsDelim = delim
+        );
    }
-
-  }
-
+ 
   ngOnInit(): void {
     this.Ready = false;
+    this.pairsDelim = this.PairsDelimdSubject$.getValue();
     this.getNewPairs();
   }
+  
   ngOnDestroy(): void {
    this.subscription.unsubscribe();
   }
-   
-  percentStyle(that: QuoteRecord) {
-    //debugger;
-      let val = that.percent;
-      let color = ''
-      if ( val >  .00001) {
-        return {'color' : 'green', 'font-weight':'bold'};
-      } else if (val < -.00001) {
-        return {'color' : 'red', 'font-weight':'bold'}
-      }
-
-      return {'color' : 'black'}
-   
-  }
-
- 
- 
+  
   onTry(){
-   // debugger;
-    this.dataSvc.testchange$().
-    then(
-      p=>{
-         p
-      });
+ 
+    this.dataSvc.testchange$();
+    // then(p=>{
+    //    p});
   
    }
  
