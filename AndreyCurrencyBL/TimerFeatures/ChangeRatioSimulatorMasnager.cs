@@ -26,13 +26,15 @@ namespace AndreyCurrencyBL.TimerFeatures
 
                 var ado = adoOrig.Clone();
                 // var ado = list[num].Ratio;
-                var koefNew = 1 + ((r.NextDouble() - 0.5) / 2.5);// Change +/- 20% randomaly;
+
+                var koefNew = 1 + ((r.NextDouble() - 0.5) / 10.0);// Change +/- 5% randomaly;
+                var percent = (koefNew - 1) * 100.0;// Change +/- 5% randomaly;
                 ado.OldRatio = ado.Ratio;
                 ado.Ratio *= koefNew; // ratio +/- 10% randomaly;
                 ado.Status = 2;
 
                 ado.Ratio = double.Parse(ado.Ratio.ToString("G6"));
-
+               
                 ret.Add(ado);
             }
 

@@ -52,11 +52,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let quote of quoteArray; trackBy: trackQuote  ">
+          <tr *ngFor="let quote of quoteArray; trackBy: trackQuote  "
+            [ngStyle]= "percentStyle(quote)"
+          >
             <td>{{ quote.pair}}</td>
             <td>{{ quote.ratio }}</td>
             <!--  <td>{{ quote.oldRatio }}</td> -->
-            <td  [ngStyle]= "percentStyle(quote)">
+            <td  >
                 {{quote.percent}}
             </td>
             <td>{{ quote.status }}</td>
