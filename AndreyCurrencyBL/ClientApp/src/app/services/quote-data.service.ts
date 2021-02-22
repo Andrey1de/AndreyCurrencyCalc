@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject,  of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { QuoteRecord ,DefaultQuotesMOK } from '../models/QuoteRecord';
+import { Quote } from '@angular/compiler';
 
 @Injectable(
   { providedIn: 'root' }
@@ -103,25 +104,43 @@ export class QuoteDataService {
 
   updateQuotesByEvents(arr : Array<any>){
     arr = arr || [];
-    arr.forEach(ev  =>{
-      let pair = this.normKey(ev.pair) ;
-      let data = this._quoteArray.find(p=> p.pair === pair);
-      if(data) {
-        try{
-          data.ratio = ev.ratio;
-          data.oldRatio = ev.oldRatio;
-          data.updated = ev.updated ;
-          data.status = 2;//Statys  means the changed value
-        } catch(err){
-          
-          console.log(err.toString());
+    //arr.forEach(ev  =>{
+       for (let index = 0; index < arr.length; index++) {
+        let ev = arr[index];
+        let pair = this.normKey(ev.pair) ;
+  
+        for (let j = 0; j < this._quoteArray.length; j++) {
+          let data : any = this._quoteArray[j];
+    
+          if(data.pair === pair){
+            data.pair = pair;
+            data.ratio = ev.ratio;
+            data.oldRatio = ev.oldRatio;
+            data.updated = ev.updated ;
+            data.percent = ev.percent ;
+       //     data.percentStype = this.percentStyle(ev) 
+            data.status = 2;//Status  means the changed value
+            console.log("+++updateQuotesByEvent=>\n"
+                + JSON.stringify(data,null,2) );
+            break;
+          }
         }
 
+ 
       }
     
-    })
+    
   }
-  
+  // percentStyle(that: QuoteRecord) {
+  //   let val = that.percent;
+  //   let color = ''
+  //   if ( val >  .00001) {color = 'red';}
+  //   else if (val < -.00001) {color = 'blue';}
+  //   else  {color = 'black';}
+  //   return {
+  //     color: color
+  //   };
+  // }
   normKey(str : string) { 
     return ('' + str).replace(/ /g,'').toUpperCase();
   }

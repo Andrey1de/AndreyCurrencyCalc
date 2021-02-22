@@ -23,7 +23,21 @@ namespace AndreyCurrenclyShared.Models
 
 
         [JsonPropertyName("oldRatio")]
-         public double OldRatio { get; set; } = -1;
+        public double OldRatio { get; set; } = -1;
+
+        [JsonPropertyName("percent")]
+        public double Percent
+        {
+            get
+            {
+                double del = 0.0;
+                if (Ratio > 0 && OldRatio > 0)
+                {
+                    del = 100.0 * (1 - (OldRatio / Ratio));
+                }
+                return double.Parse(del.ToString("G4"));
+            }
+        }
 
         [JsonPropertyName("updated")]
         public DateTime Updated { get; set; } = new DateTime(1800, 1, 1);

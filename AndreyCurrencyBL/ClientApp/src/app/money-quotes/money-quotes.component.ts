@@ -1,3 +1,4 @@
+import { typeWithParameters } from '@angular/compiler/src/render3/util';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -14,6 +15,7 @@ import { QuoteDataService } from '../services/quote-data.service';
 })
 export class MoneyQuotesComponent implements OnInit , OnDestroy{
   selectedValue : any = "All";
+  private subscription : Subscription;
 
   quoteArray : QuoteRecord[] = [];
   _quoteArraySubject$ : BehaviorSubject<QuoteRecord[]>;
@@ -43,33 +45,39 @@ export class MoneyQuotesComponent implements OnInit , OnDestroy{
       this.f.pairsDelim.setValue(val);
     }
   
-    getPercentStyle(val: number) {
-      let color = ''
-      if (val >  .00001) {color = 'red';}
-      else if (val < -.00001) {color = 'blue';}
-      else  {color = 'black';}
-      return {
-        color: color
-      };
-  }
-    private subscription : Subscription;
 
+
+    
   constructor( private fb: FormBuilder, 
     private dataSvc : QuoteDataService) { 
       this.pairsDelim = environment.moneyPairsList;
       this._quoteArraySubject$  = dataSvc.QuoteArraySubject$;
 
-      // this.subscription =
-      //  this.dataSvc.QuoteArraySubject$.subscribe(data=>{
-      //   this.quoteArray = data;
-        //debugger;
-      //   this.updateProfile();
-      // });
+      this.subscription =
+       this.dataSvc.QuoteArraySubject$.subscribe(data=>{
+        this.quoteArray = data;
+       // debugger;
+        this.updateProfile();
+      });
   }
   ngOnInit(): void {
   }
   ngOnDestroy(): void {
-   //this.subscription.unsubscribe();
+   this.subscription.unsubscribe();
+  }
+   
+  percentStyle(that: QuoteRecord) {
+    //debugger;
+      let val = that.percent;
+      let color = ''
+      if ( val >  .00001) {
+        return {'color' : 'green', 'font-weight':'bold'};
+      } else if (val < -.00001) {
+        return {'color' : 'red', 'font-weight':'bold'}
+      }
+
+      return {'color' : 'black'}
+   
   }
 
    updateProfile() {
@@ -90,11 +98,11 @@ export class MoneyQuotesComponent implements OnInit , OnDestroy{
   
    }
  
-  percent(ratio : number,oldRatio : number | null){
-    oldRatio = oldRatio || ratio;
-    let del = 100.0 * (1 - (oldRatio / ratio));
-    return del.toFixed(3);
-  }
+  // percent(ratio : number,oldRatio : number | null){
+  //   oldRatio = oldRatio || ratio;
+  //   let del = 100.0 * (1 - (oldRatio / ratio));
+  //   return del.toFixed(3);
+  // }
 
   submit(){
 

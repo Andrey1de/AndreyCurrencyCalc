@@ -84,19 +84,19 @@ namespace AndreyCurrencyBL.Controllers
         }
 
 
-        [HttpGet]
-        [Route("testchange")]
-        public async Task<ActionResult<List<CurrencyRatioADO>>> SimulateEventent()
-        {
+        //[HttpGet]
+        //[Route("testchange")]
+        //public async Task<ActionResult<List<CurrencyRatioADO>>> SimulateEventent()
+        //{
 
-            List<CurrencyRatioADO> data = ChangeRatioSimulatorMasnager.GetChanges();
+        //    List<CurrencyRatioADO> data = ChangeRatioSimulatorMasnager.GetChanges();
 
-            await Task.Delay(1);
-            await HubCont.Clients.All.ChangeRatios(data);
+        //    await Task.Delay(1);
+        //    await HubCont.Clients.All.ChangeRatios(data);
 
 
-            return Ok(data);
-        }
+        //    return Ok(data);
+        //}
 
       
         //[HttpGet]

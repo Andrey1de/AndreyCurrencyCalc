@@ -3,14 +3,15 @@ export class QuoteRecord {
   pair : string = '';
   ratio: number = -1.0;
   oldRatio: number = -1.0;
+  percent: number = -1.0;
   updated : string = '';
   status : number = -1;
-  validate(a : any) {
+ // percentStyle : any = {'color':'magenta'};
+  validate() {
     return !!this.pair && 
       !!this.ratio && this.ratio > 0;
- // !!this.status && this.status > 0
   }
-  
+ 
    constructor() {
      //this.pair = (this.pair || '').toUpperCase() 
    }
