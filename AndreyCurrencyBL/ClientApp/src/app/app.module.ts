@@ -13,8 +13,6 @@ import { ListQuotesComponent } from './list-quotes/list-quotes.component';
 
 //import { MaterialsModule } from './modules/materials.module';
 import { QuoteDataService } from './services/quote-data.service';
-//import { QuotePairsService} from './services/quote-pairs.service_ts';
-import { from } from 'rxjs';
 import { SignalRService } from './services/signal-r.service';
 import { MoneyTableComponent } from './money-table/money-table.component';
 @NgModule({
@@ -31,12 +29,10 @@ import { MoneyTableComponent } from './money-table/money-table.component';
     HttpClientModule,
    
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      // { path: 'counter', component: CounterComponent },
-      // { path: 'fetch-data', component: FetchDataComponent },
       { path: 'money-quotes', component: MoneyQuotesComponent },
       { path: 'list-quotes', component: ListQuotesComponent },
-    ]) ,
+      { path: '', component: HomeComponent, pathMatch: 'full' },
+   ]) ,
     FormsModule,
     ReactiveFormsModule,
    // MaterialsModule.forRoot()

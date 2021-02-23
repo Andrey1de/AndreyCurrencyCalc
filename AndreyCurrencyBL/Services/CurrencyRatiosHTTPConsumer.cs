@@ -64,7 +64,7 @@ namespace AndreyCurrecyBL.Services
 
             foreach (var ado in retArr)
             {
-                  ado.OldRatio = ado.Ratio;
+                ado.OldRatio = ado.Ratio;
                 ado.Status = 1;
                 list.Add(ado);
             }

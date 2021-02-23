@@ -1,10 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-// import { FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
-// import { debug } from 'console';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { QuoteRecord } from '../models/QuoteRecord';
 import { QuoteDataService } from '../services/quote-data.service';
 
 
@@ -15,8 +10,7 @@ import { QuoteDataService } from '../services/quote-data.service';
 })
 export class MoneyQuotesComponent implements OnInit, OnDestroy {
   selectedValue: any = "All";
-  private subscription: Subscription;
-
+ 
   @Input('pairsDelim')
   get pairsDelim(): string {
     return this.f.pairsDelim.value;
@@ -28,8 +22,8 @@ export class MoneyQuotesComponent implements OnInit, OnDestroy {
   @Input('Ready')
   Ready: boolean = false;
 
-  readonly PairsDelimdSubject$: BehaviorSubject<string>;
-
+  //readonly PairsDelimdSubject$: BehaviorSubject<string>;
+ 
   form = this.fb.group({
     pairsDelim: [''],//, Validators.required],
     //  pairsSelect: [''],
@@ -41,20 +35,18 @@ export class MoneyQuotesComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder,
     private dataSvc: QuoteDataService) {
-    this.PairsDelimdSubject$ = dataSvc.PairsDelimdSubject$;
-    this.subscription = this.PairsDelimdSubject$.subscribe(
-      delim => this.pairsDelim = delim
-    );
+  
   }
 
   ngOnInit(): void {
     this.Ready = false;
-    this.pairsDelim = this.PairsDelimdSubject$.getValue();
+    this.pairsDelim = this.dataSvc.PairsDelim;
+   
     this.getNewPairs();
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  
   }
 
   onTry() {
@@ -76,7 +68,7 @@ export class MoneyQuotesComponent implements OnInit, OnDestroy {
           console.error(res);
         }
         this.Ready = true;
-        //console.log('quoteDataService.retrieveData\t\n=>('+this.pairsDelim +')');
+        console.log('quoteDataService.retrieveData\t\n=>('+this.pairsDelim +')');
       });
 
   }

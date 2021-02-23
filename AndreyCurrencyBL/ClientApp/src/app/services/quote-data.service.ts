@@ -14,30 +14,53 @@ import { QuoteRecord ,DefaultQuotesMOK } from '../models/QuoteRecord';
  )
 export class QuoteDataService {
 
+ 
+  
  // private members
-  get QuoteArray(): QuoteRecord[] {return this._quoteArray; }
+  
 
-  private  _quoteArray : QuoteRecord[] = [];
-  private _pairsDelim : string;
-  get PairsDelim() : string {return this._pairsDelim;}
-   
-  readonly QuotesSubject$: BehaviorSubject<QuoteRecord[]>
-  readonly PairsDelimdSubject$: BehaviorSubject<string>
-     
+  private _quoteArray : QuoteRecord[] = [];
+  private _pairsDelimArr : string[] = [];
 
-  constructor(private http: HttpClient) {
-    this._pairsDelim = environment.moneyPairsList;
-
-    console.log('+++QuoteDataService()');
-    this.PairsDelimdSubject$  =  
-        new BehaviorSubject<string>(this._pairsDelim);
-    this.QuotesSubject$  =  
-        new BehaviorSubject<QuoteRecord[]>(this.QuoteArray);
+  get QuoteArray(): QuoteRecord[] {return  this._quoteArray ; }
+  get PairsDelim() : string {
+         return (this._pairsDelimArr || []).join(',');
   }
    
+  readonly QuotesSubject$: BehaviorSubject<QuoteRecord[]>
     
-  public  async getDelimidetPairs$ ( delimStrIn : string) : 
-    Promise<QuoteRecord[]> {
+
+  constructor(private http: HttpClient) {
+    this._pairsDelimArr = environment.moneyPairsList.split(',');
+
+    console.log('+++QuoteDataService()');
+    // this.PairsDelimdSubject$  =  
+    //     new BehaviorSubject<string>(this._pairsDelim);
+    this.QuotesSubject$  =  
+        new BehaviorSubject<QuoteRecord[]>(this._quoteArray);
+  }
+
+  private setQuoteArray( arrq : QuoteRecord[])  {
+    this._quoteArray = new QuoteRecord[0];
+   
+ 
+    arrq.map(q=>{
+      q.pair = this.normKey(q.pair);
+      if(this.validKey(q.pair)){
+        this._quoteArray.push(q);
+  
+       }
+    });
+      
+    if(this.isarray(this._quoteArray)) {
+      this.QuotesSubject$.next(this._quoteArray)
+
+    }
+  }
+
+      
+  private  async getDelimidetPairs$ ( delimStrIn : string ) 
+  : Promise<QuoteRecord[]> {
     //debugger;
     let delimStr : string = delimStrIn.replace(/\//g,'-').toLowerCase();
     let url = environment.applicationUrl 
@@ -52,8 +75,8 @@ export class QuoteDataService {
     
   }
 
-  public  async retrieveData$ ( delimStrIn : string = 'all') : 
-  Promise<string>
+  public  async retrieveData$ ( delimStrIn : string = 'all')
+    : Promise<string>
   {
 
     delimStrIn = (delimStrIn || '');
@@ -66,18 +89,8 @@ export class QuoteDataService {
     let ret : string = "OK";
     let delim = '';
     try {
-      this._quoteArray =  await this.getDelimidetPairs$(delimStrIn);
-      if(this._quoteArray && Array.isArray(this._quoteArray)
-         && this._quoteArray.length > 0){
-        this._quoteArray.forEach(p=> {
-          p.pair = this.normKey(p.pair);
-          delim = delim + ((!delim) ? p.pair: ','+ p.pair) ;
-        })
-        this.QuotesSubject$.next(this._quoteArray);
-        if(this._pairsDelim != delim)
-        this.PairsDelimdSubject$.next(this._pairsDelim = delim);
-
-      }
+      let quotesArray =  await this.getDelimidetPairs$(delimStrIn);
+      this.QuotesSubject$.next(quotesArray);
        
     } catch (error) {
       ret = error.toString();
@@ -127,9 +140,19 @@ export class QuoteDataService {
     
     
   }
-  
-  normKey(str : string) { 
-    return ('' + str).replace(/ /g,'').toUpperCase();
+
+  private isarray(arr : any) : boolean  {
+    return !!arr && Array.isArray(arr) && arr.length > 0;
+   
+  }
+
+  validKey(key: string){
+    return !!key && key.length > 6
+    && (key.includes('-') || key.includes('/'));
+  }
+  normKey(key : string) { 
+    return ('' + key).replace(/ /g,'')
+            .replace(/-/g,'\/').toUpperCase();
   }
  
   
