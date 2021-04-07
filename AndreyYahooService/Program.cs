@@ -39,7 +39,7 @@ namespace AndreyYahooService
                     {
                         webBuilder.UseStartup<Startup>();
 
-                        if (applicationUrls.Length > 0)
+                        if (false && applicationUrls.Length > 0)
                         {
                             webBuilder.UseUrls(applicationUrls);
 
