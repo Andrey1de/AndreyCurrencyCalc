@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AndreyToUsd.Data;
@@ -10,29 +8,44 @@ using AndreyToUsd.Models;
 
 namespace AndreyToUsd.Controllers
 {
+    /// <summary>
+    /// API is designed to control and update the ratios 
+    /// of currencies to USD and to each other
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class RateToUsdController : ControllerBase
     {
         private readonly ToUsdContext _context;
 
+        
+
         public RateToUsdController(ToUsdContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Get a list of the of currencies to USD ratio 
+        /// </summary>
+        /// <returns></returns>
         // GET: api/RateToUsd
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RateToUsd>>> GetRates()
+        public async Task<ActionResult<RateToUsd[]>> GetRates()
         {
-            return await _context.Rates.ToListAsync();
+            return await _context.Rates.ToArrayAsync();
         }
 
+        /// <summary>
+        /// Get the ratio of currency to USD actual for the last hour
+        /// </summary>
+        /// <param name="code"> currency code - 3 letters for example EUR</param>
+        /// <returns></returns>
         // GET: api/RateToUsd/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<RateToUsd>> GetRateToUsd(string id)
+        [HttpGet("{code}")]
+        public async Task<ActionResult<RateToUsd>> GetRateToUsd(string code)
         {
-            var rateToUsd = await _context.Rates.FindAsync(id);
+            var rateToUsd = await _context.Rates.FindAsync(code);
 
             if (rateToUsd == null)
             {
@@ -42,12 +55,37 @@ namespace AndreyToUsd.Controllers
             return rateToUsd;
         }
 
-        // PUT: api/RateToUsd/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRateToUsd(string id, RateToUsd rateToUsd)
+           /// <summary>
+        /// Get the ratio of two currencies From / To actual for the last hour
+        /// </summary>
+        /// <param name="from"> currency code - 3 letters for example EUR</param>
+        /// <param name="to"> currency code - 3 letters for example JPY</param>
+        /// <returns></returns>
+        [HttpGet("{from}/{to}")]
+        public async Task<ActionResult<FromTo>>
+                GetFromToTo(string from,string to)
         {
-            if (id != rateToUsd.code)
+            var rateToUsd = await _context.Rates.FindAsync(code);
+
+            if (rateToUsd == null)
+            {
+                return NotFound();
+            }
+
+            return rateToUsd;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="rateToUsd"></param>
+        /// <returns></returns>
+        // PUT: api/RateToUsd/RUB
+        [HttpPut("{code}")]
+        public async Task<IActionResult> PutRateToUsd(string code, RateToUsd rateToUsd)
+        {
+            if (code != rateToUsd.code)
             {
                 return BadRequest();
             }
@@ -60,7 +98,7 @@ namespace AndreyToUsd.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RateToUsdExists(id))
+                if (!RateToUsdExists(code))
                 {
                     return NotFound();
                 }
@@ -74,7 +112,6 @@ namespace AndreyToUsd.Controllers
         }
 
         // POST: api/RateToUsd
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<RateToUsd>> PostRateToUsd(RateToUsd rateToUsd)
         {
@@ -98,9 +135,9 @@ namespace AndreyToUsd.Controllers
             return CreatedAtAction("GetRateToUsd", new { id = rateToUsd.code }, rateToUsd);
         }
 
-        // DELETE: api/RateToUsd/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRateToUsd(string id)
+        // DELETE: api/RateToUsd/RUB
+        [HttpDelete("{code}")]
+        public async Task<IActionResult> DeleteRateToUsd(string RUB)
         {
             var rateToUsd = await _context.Rates.FindAsync(id);
             if (rateToUsd == null)

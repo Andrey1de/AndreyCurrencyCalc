@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AndreyYahooService", "Andre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AndreyCurrenclyShared", "AndreyCurrenclyShared\AndreyCurrenclyShared.csproj", "{6B7F1A74-D1F9-4ACB-A5BE-A991A2C05097}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndreyToUsd", "AndreyToUsd\AndreyToUsd.csproj", "{DDFCD2F1-31D4-4F99-A579-D6520BEBAB42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AndreyToUsd", "AndreyToUsd\AndreyToUsd.csproj", "{DDFCD2F1-31D4-4F99-A579-D6520BEBAB42}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "andrey1de-stocks", "..\heroku\andrey1de-stocks\andrey1de-stocks.njsproj", "{7AB8B1CE-56E3-472D-A582-1CF118DA04C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{DDFCD2F1-31D4-4F99-A579-D6520BEBAB42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDFCD2F1-31D4-4F99-A579-D6520BEBAB42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDFCD2F1-31D4-4F99-A579-D6520BEBAB42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AB8B1CE-56E3-472D-A582-1CF118DA04C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AB8B1CE-56E3-472D-A582-1CF118DA04C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AB8B1CE-56E3-472D-A582-1CF118DA04C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AB8B1CE-56E3-472D-A582-1CF118DA04C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
